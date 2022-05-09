@@ -1,4 +1,6 @@
 const UserModel = require("../models/userModel")
+const jwt=require('jsonwebtoken')
+const userModel = require("../models/userModel")
 
 
 
@@ -79,4 +81,58 @@ const CreateUser = async function (req, res) {
     }
 }
 
+
+const userLogin = async function(req,res){
+    try {
+       const requestBody= req.body;
+       if(!isValidRequestBody(requestBody)){
+           res.status(400).send({status:false, message:'Invalid request parameters, Please provide login details'})
+           return
+       }
+
+       //Extract params
+       const {email, password} = requestBody;
+
+       //validation starts
+       if(!isValid(email)){
+           res.status(400).send({status:false, message:`Email is required`})
+           return
+       }
+       
+       if (!(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email))){
+           res.status(400).send({status:false, message: `Emial should be a valid email address`})
+           return
+       }
+
+       if(!isValid(password)){
+           res.status(400).send({status:false, message: `Password is required`})
+           return
+       }
+       //validation ends
+
+       const user = await userModel.findOne({email,password});
+
+       if(!user){
+           res.status(400).send({status:false, message:`Invalid login credentials`});
+           return
+       }
+
+       const token = await jwt.sign({
+           authorId: user._id,
+           batch: "uranium",
+           organisation: 'FunctionUp'
+       },
+       "My private key"
+       );
+
+       res.header('x-api-key',token);
+       res.status(200).send({status:true, message:`User login successfully`, data:{token}});
+
+   } catch (error) {
+       res.status(500).send({status:false, message:error.message});
+   }
+}
+
 module.exports. CreateUser=CreateUser
+
+module.exports.userLogin=userLogin
