@@ -133,6 +133,6 @@ const userLogin = async function(req,res){
    }
 }
 
-module.exports. CreateUser=CreateUser
 
-module.exports.userLogin=userLogin
+module.exports= {CreateUser,userLogin}
+
