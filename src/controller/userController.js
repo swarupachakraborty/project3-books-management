@@ -117,12 +117,12 @@ const userLogin = async function(req,res){
            return
        }
 
-       const token = await jwt.sign({
-           authorId: user._id,
+       const token = jwt.sign({
+           authorId: user._id.toString(),
            batch: "uranium",
            organisation: 'FunctionUp'
        },
-       "My private key"
+           "My private key"
        );
 
        res.header('x-api-key',token);
