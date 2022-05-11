@@ -57,14 +57,17 @@ const CreateUser = async function (req, res) {
         if (!isValid(phone)) {
             return res.status(400).send({status: false, msg: "Enter phone no. " })
         }
-        const isphone = await UserModel.findOne({ phone })
-        if (isphone) {
-            return res.status(400).send({status: false, msg: "Phone no.  is already used" })
-        }
+
         if (!(/^[6-9]\d{9}$/.test(phone))) {
             return res.status(400).send({ status: false, message: `Phone number should be a valid number` })
 
         }
+        
+        const isphone = await UserModel.findOne({ phone })
+        if (isphone) {
+            return res.status(400).send({status: false, msg: "Phone no.  is already used" })
+        }
+       
         if (!isValid(password.trim())) {
             return res.status(400).send({status: false, msg: "Enter Password " })
         }
@@ -118,7 +121,7 @@ const userLogin = async function(req,res){
        }
 
        const token = jwt.sign({
-           authorId: user._id.toString(),
+           userId: user._id.toString(),
            batch: "uranium",
            organisation: 'FunctionUp',
            expire: "10s"

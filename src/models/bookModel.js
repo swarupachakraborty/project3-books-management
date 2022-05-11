@@ -22,7 +22,7 @@ const bookSchema = new mongoose.Schema({
         validate: {
             validator: function (ISBN) {
                 return /^\+?([1-9]{3})\)?[-. ]?([0-9]{10})$/.test(ISBN)
-            }, message: 'Please fill a valid mobile number', isSync: true
+            }, message: 'Please fill a valid ISBN number', isasync:false
         }
     },
     category: {

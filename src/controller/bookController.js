@@ -146,7 +146,7 @@ const getBookById = async function (req, res) {
 
       let findBook = await bookModel.findById({ _id: bookId,isDeleted:false})
       if (!findBook) {
-          return res.status(404).send({ status: false, message: "No data Found,please check the id and try again" })
+          return res.status(400).send({ status: false, message: "No data Found,please check the id and try again" })
       }
       let review = await bookModel.find({ bookId: bookId })
       data1 = { findBook }
@@ -159,9 +159,35 @@ const getBookById = async function (req, res) {
 }
 
 
+//=======================DeleteBook ById=====================================
+
+const deleteBooks = async function (req, res) {
+
+  try{
+  let bookId = req.params.bookId;
+  let Book = await userModel.findById(bookId);
+  if (!Book) {
+    return res.status(404).send({status: false, msg: "No such book exists"});
+  }
+
+  let deletedBooks = await userModel.findOneAndUpdate(
+    { _id: bookId },
+    { $set: { isDeleted: true } },
+    { new: true }
+  );
+
+  res.status(204).send({ status: true, data: deletedBooks});
+}
+catch (err) {
+  res.status(500).send({ msg: "Error", error: err.message })
+}
+}
+
+
   module.exports.createBook=createBook
   module.exports.getBooksByQuery = getBooksByQuery
   module.exports.getBookById = getBookById
+  module.exports.deleteBooks = deleteBooks
 
 
 
