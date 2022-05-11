@@ -38,12 +38,11 @@ const bookSchema = new mongoose.Schema({
         default: false
     },
     releasedAt: {
-        type: Date,
+        type: String,
         required:true
     },
     deletedAt:{
-        type:Boolean,
-        default:null
+        type:Date,
     }
 
 }, { timestamps: true })
