@@ -120,7 +120,8 @@ const userLogin = async function(req,res){
        const token = await jwt.sign({
            authorId: user._id,
            batch: "uranium",
-           organisation: 'FunctionUp'
+           organisation: 'FunctionUp',
+           expire: "10s"
        },
        "My private key"
        );

@@ -129,7 +129,7 @@ const isValid = function(value){
         const count = books.length
 
 
-        return res.status(200).send({ status: true, NumberofBooks: count, msg: "books list", data: sortedb })
+        return res.status(200).send({ status: true, NumberofBooks: count, msg: "books list",data:sortedb })
 
     } catch (err) {
         res.status(500).send({ msg: err.message })

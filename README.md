@@ -236,7 +236,7 @@ Refer below sample
       "userId": ObjectId("88abc190ef0288abc190ef02")
       "category": "Book",
       "reviews": 0,
-      "releasedAt": "2021-09-17T04:25:07.803Z"
+      "releasedAt": "2021-09-17"
     }
   ]
 }

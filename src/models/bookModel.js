@@ -18,7 +18,12 @@ const bookSchema = new mongoose.Schema({
     ISBN: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        validate: {
+            validator: function (ISBN) {
+                return /^\+?([1-9]{3})\)?[-. ]?([0-9]{10})$/.test(ISBN)
+            }, message: 'Please fill a valid mobile number', isSync: true
+        }
     },
     category: {
         type: String,
@@ -42,7 +47,7 @@ const bookSchema = new mongoose.Schema({
         required:true
     },
     deletedAt:{
-        type:Boolean,
+        type:Date,
         default:null
     }
 
