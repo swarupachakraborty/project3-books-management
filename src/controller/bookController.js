@@ -140,24 +140,83 @@ const isValid = function(value){
 
 
 
-const getBookById = async function (req, res) {
+// const getBookById = async function (req, res) {
+//   try {
+//       const bookId = req.params.bookId;
+
+//       let findBook = await bookModel.findById({ _id:bookId, isDeleted:false})
+//       if (!findBook) {
+//           return res.status(400).send({ status: false, message: "No data Found,please check the id and try again" })
+//       }
+//      // let review = await bookModel.find({ bookId: bookId })
+      
+
+//       return res.status(200).send({status:true,message:"Books list", data:findBook})
+//   }
+//   catch(err){
+//       return res.status(500).send({ status: false, message: "server error", error: err.message });
+//   }
+// }
+
+const getBookById = async (req, res) => {
   try {
-      const bookId = req.params.bookId;
+    let bookId = req.params.bookId;
+    if (!isValidObjectId(bookId)) return res.status(400).send({ status: false, message: "Enter a correct book id" });
 
-      let findBook = await bookModel.findById({ _id: bookId,isDeleted:false})
-      if (!findBook) {
-          return res.status(400).send({ status: false, message: "No data Found,please check the id and try again" })
-      }
-      let review = await bookModel.find({ bookId: bookId })
-      data1 = { findBook }
+    let getBook = await bookModel.findById(bookId).select({ __v: 0 });
+    if (!getBook) return res.status(404).send({ status: false, message: "No book found" })
 
-      return res.status(200).send({status:true,message:"Books list", data:{data1}})
-  }
-  catch(err){
-      return res.status(500).send({ status: false, message: "server error", error: err.message });
+    let { ...data } = getBook;
+  
+
+    res.status(200).send({ status: true, message: "Books list", data: data })
+  } catch (err) {
+    res.status(500).send({ status: false, message: err.message })
   }
 }
 
+//............................update books...................................................//
+const updateBooks = async function (req, res) {
+  try {
+      
+      // let title = req.body.title
+      // let excerpt = req.body.excerpt
+      // let releasedAt = req.body.releasedAt
+      // let ISBN = req.body.ISBN
+      // let bookId = req.params.bookId
+      const {title, excerpt, releasedAt, ISBN, bookId} = req.body
+
+      const validBOOktitle= await bookModel.findOne({title:title})
+      if(validBOOktitle){
+          return res.status(400).send({status:false,msg:"title is already present"})
+      }
+
+      const validISBN = await bookModel.findOne({ ISBN: ISBN })
+      if (validISBN) {
+          return res.status(400).send({ status: false, msg: "ISBN is already exist" })
+      }
+
+      let book = await bookModel.findOne({ _id: bookId, isDeleted: false })
+
+      if (!book) {
+          return res.status(400).send({ status: false, msg: "no book is found" })
+      } else {
+
+      }
+      let allbook = await bookModel.findOneAndUpdate(
+          { _id: bookId, isDeleted: false },
+          { $set: { title: title, excerpt: excerpt, releasedAt: releasedAt, ISBN: ISBN } },
+          { new: true })
+
+      return res.status(200).send({ data: allbook })
+
+
+
+  } catch (err) {
+      console.log(err)
+      res.status(500).send({ msg: err.message })
+  }
+}
 
 //=======================DeleteBook ById=====================================
 
@@ -172,7 +231,7 @@ const deleteBooks = async function (req, res) {
 
   let deletedBooks = await userModel.findOneAndUpdate(
     { _id: bookId },
-    { $set: { isDeleted: true } },
+    { $set: { isDeleted: true, deletedAt:Date.now() } },
     { new: true }
   );
 
@@ -187,6 +246,7 @@ catch (err) {
   module.exports.createBook=createBook
   module.exports.getBooksByQuery = getBooksByQuery
   module.exports.getBookById = getBookById
+  module.exports.updateBooks=updateBooks
   module.exports.deleteBooks = deleteBooks
 
 

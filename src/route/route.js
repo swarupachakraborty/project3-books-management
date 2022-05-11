@@ -11,13 +11,17 @@ router.post("/register",userController.CreateUser)
 
 router.post('/login', userController.userLogin)
 
+//Books api
+
 router.post("/books/:userId",authenticate.authentication,bookController.createBook)
 
 router.get("/books",bookController.getBooksByQuery)
 
-router.get("/books/:bookId",bookController.getBookById)
+router.get("/books/:bookId",authenticate.authentication,bookController.getBookById)
 
-router.delete("/books/:bookId",bookController.deleteBooks)
+router.put("/books/:bookId",authenticate.authentication,authorise.authorisation,bookController.updateBooks)
+
+router.delete("/books/:bookId",authenticate.authentication,bookController.deleteBooks)
 
 
 module.exports=router;
