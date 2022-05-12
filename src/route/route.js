@@ -12,13 +12,21 @@ router.post("/register",userController.CreateUser)
 
 router.post('/login', userController.userLogin)
 
+<<<<<<< HEAD
 router.post("/books/:userId",bookController.createBook)
+=======
+//Books api
+
+router.post("/books/:userId",authenticate.authentication,bookController.createBook)
+>>>>>>> d0d6f3739d3dced2127afe4949d45ddccc42a51a
 
 router.get("/books",bookController.getBooksByQuery)
 
-router.get("/books/:bookId",bookController.getBookById)
+router.get("/books/:bookId",authenticate.authentication,bookController.getBookById)
 
-router.delete("/books/:bookId",bookController.deleteBooks)
+router.put("/books/:bookId",authenticate.authentication,authorise.authorisation,bookController.updateBooks)
+
+router.delete("/books/:bookId",authenticate.authentication,bookController.deleteBooks)
 
 //==========review api
 
