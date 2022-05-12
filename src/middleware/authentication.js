@@ -1,39 +1,36 @@
-const mongoose = require('mongoose');
-const jwt = require("jsonwebtoken");
+const jwt =require("jsonwebtoken")
 
-const userModel = require("../models/userModel")
-const isValid = mongoose.Types.ObjectId.isValid
+const authentication = async function(req,res,next){
 
-//*User-Authentication
 
-const authentication = async function(req, res, next) {
     try{
-    //here using token we validate the user 
-    let token = req.headers["x-Api-Key"];
-    if (!token) token = req.headers["x-api-key"];
-    if (!token) return res.status(401).send({ status: false, msg: "token must be present" });
+
+    // take token from client 
+    let token = req.headers["x-Api-key"]
+
+    if( token == undefined ) { token= req.headers["x-api-key"] }
+
+    //If no token is present in the request header return error
+    if (!token) return res.status(401).send({ status: false, msg: "Token must be present" });
+
+    //if token is present then decode the token
+    let decodedToken = jwt.verify(token,"My private key")
     
-//*Token decoded 
+    // Check Decoded token is here or not
+    if(!decodedToken) return res.status(401).send({ status : false, msg : "Token is Not Present"})
 
-    let decodedToken = jwt.verify(token,  "My private key");
-    if (!decodedToken) return res.status(400).send({ status: false, msg: "token is invalid" });
+    req.decodedToken = decodedToken 
+    // if Everything is ok then we head towards Api's
+    next();
 
-//*To check valid User-ID Input
-
-    let userId= req.params.userId
-    if(!isValid(userId)) return res.status(404).send({ status: false, msg: "userId invalid" })
-
-//*To check Author Exist or not
-
-    let user= await userModel.findById(userId);
-    if (!user) return res.status(404).send("No such user exists");
-    }
-    catch (err) {res.status(500).send({ msg: "server error", error: err.message })}
-    next()
+}catch(err)
+{
+res.status(500).send({ status: false, err : "Token is Invalid" })
+}
 }
 
 
-module.exports.authentication= authentication
 
+module.exports={ authentication }
 
 

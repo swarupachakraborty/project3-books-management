@@ -1,7 +1,9 @@
-const bookModel= require('../models/bookModel')
-const userModel= require('../models/userModel')
 const mongoose = require('mongoose')
-const moment=require('moment')
+const userModel= require('../models/userModel')
+const reviewModel = require('../models/reviewModel')
+const bookModel = require('../models/bookModel')
+
+
 //const ISBN = require('isbn-validate')
 let ObjectId=mongoose.Types.ObjectId
 
@@ -52,7 +54,7 @@ const isValid = function(value){
       }
   
       if(!isValidObjectId(userId)){
-        res.status(400).send({status:false, message:'${userId} is not a valid user id'})
+        res.status(400).send({status:false, message:"not a valid user "});
         return
       }
 
@@ -129,7 +131,7 @@ const isValid = function(value){
         const count = books.length
 
 
-        return res.status(200).send({ status: true, NumberofBooks: count, msg: "books list", data: sortedb })
+        return res.status(200).send({ status: true, NumberofBooks: count, msg: "books list",data:sortedb })
 
     } catch (err) {
         res.status(500).send({ msg: err.message })
@@ -137,7 +139,6 @@ const isValid = function(value){
 }
 
 ///====================GET BOOK BY ID====================================
-
 
 
 const getBookById = async function (req, res) {
@@ -148,8 +149,12 @@ const getBookById = async function (req, res) {
       if (!findBook) {
           return res.status(404).send({ status: false, message: "No data Found,please check the id and try again" })
       }
-      let review = await bookModel.find({ bookId: bookId })
-      data1 = { findBook }
+      
+      let review = await reviewModel.find({ bookId: bookId })
+      data1 = {
+          findBook,
+          "reviewsData": review
+      }
 
       return res.status(200).send({status:true,message:"Books list", data:{data1}})
   }
@@ -159,9 +164,35 @@ const getBookById = async function (req, res) {
 }
 
 
+//=======================DeleteBook ById=====================================
+
+const deleteBooks = async function (req, res) {
+
+  try{
+  let bookId = req.params.bookId;
+  let Book = await userModel.findById(bookId);
+  if (!Book) {
+    return res.status(404).send({status: false, msg: "No such book exists"});
+  }
+
+  let deletedBooks = await userModel.findOneAndUpdate(
+    { _id: bookId },
+    { $set: { isDeleted: true } },
+    { new: true }
+  );
+
+  res.status(204).send({ status: true, data: deletedBooks});
+}
+catch (err) {
+  res.status(500).send({ msg: "Error", error: err.message })
+}
+}
+
+
   module.exports.createBook=createBook
   module.exports.getBooksByQuery = getBooksByQuery
   module.exports.getBookById = getBookById
+  module.exports.deleteBooks = deleteBooks
 
 
 
