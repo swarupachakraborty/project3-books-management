@@ -124,9 +124,9 @@ const userLogin = async function(req,res){
            userId: user._id.toString(),
            batch: "uranium",
            organisation: 'FunctionUp',
-           expire: "10m"
-       },
-           "My private key"
+        //    expire: "10m"
+       },"My private key"
+           
        );
 
        res.header('x-api-key',token);

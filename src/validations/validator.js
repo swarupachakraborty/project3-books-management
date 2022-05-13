@@ -8,7 +8,7 @@ const isValidObjectId = (objectId) => {
   };
 
 
-  const validStr = (String) => {
+  const validString = (String) => {
     if (/\d/.test(String)) {
       return true
     } else {
@@ -17,13 +17,16 @@ const isValidObjectId = (objectId) => {
   };
 
 
-  const  isValidBody = (object) => {
-    if (Object.keys(object).length > 0) {
-      return false
-    } else {
-      return true;
-    }
-  };
+
+  const isValidRequestBody = function (requestBody) {
+    return Object.keys(requestBody).length > 0;
+}
 
 
-module.exports = { isValidBody,isValidObjectId,validStr}
+  const isValid = function (value) {
+    if (typeof value === 'undefined' || value === null) return false
+    if (typeof value === 'string' && value.trim().length === 0) return false
+    return true;
+}
+
+module.exports = {isValidRequestBody ,isValidObjectId,validString,isValid}
