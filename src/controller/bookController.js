@@ -113,14 +113,12 @@ const createBook = async (req, res) => {
       console.log(err)
       return res.status(500).send({ status: false, message: err.message })  
 };
-}
+ }
   //=======================GET BOOK BY QUERY=====================================
 
- // get books with particular fileds using query params
 const getBooks = async function (req, res) {
   try {
-
-      const query = req.query
+     const query = req.query
       const { userId, category, subcategory } = query
       // user id vlidation 
       if (userId && !mongoose.Types.ObjectId.isValid(userId)) {
@@ -146,9 +144,6 @@ const getBooks = async function (req, res) {
 
 ///====================GET BOOK BY ID====================================
 
-
-
-
 const getBookById = async (req, res) => {
   try {
     let bookId = req.params.bookId;
@@ -169,101 +164,6 @@ const getBookById = async (req, res) => {
   }
 }
 
-// //............................update books...................................................//
-// const updateBooks = async function (req, res) {
-//   try {
-//     // let bookId = req.params.bookId;
-//       // let title = req.body.title
-//       // let excerpt = req.body.excerpt
-//       // let releasedAt = req.body.releasedAt
-//       // let ISBN = req.body.ISBN
-//       // let bookId = req.params.bookId
-//       const {title, excerpt, releasedAt, ISBN, bookId} = req.body
-
-//       const validBookTitle= await bookModel.findOne({title:title})
-//       if(validBookTitle){
-//           return res.status(400).send({status:false,msg:"title is already present"})
-//       }
-
-//       const validISBN = await bookModel.findOne({ ISBN: ISBN })
-//       if (validISBN) {
-//           return res.status(400).send({ status: false, msg: "ISBN is already exist" })
-//       }
-
-//       let book = await bookModel.findOne({ _id: bookId, isDeleted: false })
-
-//       if (!book) {
-//           return res.status(400).send({ status: false, msg: "no book is found" })
-//       } else {
-
-//       }
-//       let allbook = await bookModel.findOneAndUpdate(
-//           { _id: bookId, isDeleted: false },
-//           { $set: { title: title, excerpt: excerpt, releasedAt: releasedAt, ISBN: ISBN } },
-//           { new: true })
-
-//       return res.status(200).send({ data: allbook })
-
-
-
-//   } catch (err) {
-//       console.log(err)
-//       res.status(500).send({ msg: err.message })
-//   }
-// }
-//*Update Book
-
-const updateBook = async function (req, res) {
-    try {
-      const bookId = req.params.bookId;
-      if (!bookId)
-        return res.status(404).send({ status: false, msg: "No Book Found" });
-      if (!isValid(bookId))
-        return res.status(404).send({ status: false, msg: "BookID invalid" });
-  
-      const bookFound = await bookModel.findOne(bookId);
-      if (bookFound.isDeleted === true) {
-        return res.status(404).send({ Status: "false", msg: "bookis deleted " });
-      }
-  
-      //*Extracts Param
-      const title = req.body.title;          
-      const  excerpt= req.body.excerpt;
-      const releasedate = req.body.releasedate;
-      const ISBN = req.body.ISBN;
-     
-  
-      if (title || excerpt|| releasedate || ISBN ) {
-        const updatedBook = await bookModel.findOneAndUpdate(
-          { _id: bookId },
-          {
-            title: title,
-            excerpt:excerpt,
-            releasedate:releasedate,
-            ISBN:ISBN,
-            
-           
-            isPublished: true,
-            publishedAt: new Date(),
-          },
-          { new: true }
-        );
-  
-        //*Validation
-        if (!updatedBook) return res.status(404).send({ msg: "Book not found" });
-        res
-          .status(200)
-          .send({ status: true, msg: "Updated successfully", data: updatedBook });
-      } else {
-        res.status(400).send({ msg: "data is required in body " });
-      }
-    } catch (err) {
-      res
-        .status(500)
-        .send({ status: false, msg: "server Error", err: err.message });
-    }
-  };
-  
 //=======================DeleteBook ById=====================================
 
 const deleteBooks = async (req, res)=> {
@@ -289,11 +189,18 @@ const deleteBooks = async (req, res)=> {
   }
 };
 
+
+
+
+
+
+
   module.exports.createBook=createBook
   module.exports.getBooks = getBooks
   module.exports.getBookById = getBookById
-  module.exports.updateBook=updateBook
+  module.exports.updateBook= updateBook
   module.exports.deleteBooks = deleteBooks
+  
 
 
 

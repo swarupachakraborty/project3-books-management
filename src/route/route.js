@@ -22,6 +22,6 @@ router.delete("/books/:bookId",authentication,bookController.deleteBooks)
 //Review APIs
 
 router.post("/books/:bookId/review",addReview)
-// router.put("books/:bookId/review/:reviewId", updateReview)
-     router.delete('/books/:bookId/review/:reviewId', deleteReview);
+//  router.put("books/:bookId/review/:reviewId", updateReview)
+//  router.delete('/books/:bookId/review/:reviewId', deleteReview);
 module.exports=router;
