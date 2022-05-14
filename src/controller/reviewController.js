@@ -56,6 +56,92 @@ const addReview = async (req, res) => {
 
 
 //---------------PUT /books/:bookId/review/:reviewId
+// PUT /books/:bookId/review/:reviewId | Update the review - review, rating, reviewer's name
+const update = async (req, res) => {
+  try {
+
+      // get book id
+      const bookId = req.params.bookId
+      // get review id id
+      const reviewId = req.params.reviewId
+      // get revirw data from body for updata
+      const dataForUpdate = req.body
+      // dataForUpdate is valid or not
+      if (!isValidRequestBody(dataForUpdate)) return res.status(400).send({
+          status: false,
+          message: "Body is required!"
+      })
+
+      // check book from db ---
+      const isBook = await bookModel.findById(bookId).catch(_ => null)
+      // check if exist or not
+      if (!isBook) return res.status(404).send({
+          status: false,
+          message: 'Book not found!'
+      })
+
+      // check if book is deleted
+      if (isBook.isDeleted) return res.status(404).send({
+          status: false,
+          message: "Book already deleted, can't add review!"
+      })
+
+
+      // check Review from db ---
+      const isReview = await reviewModel.findById(reviewId).catch(_ => null)
+      // check if exist or not
+      if (!isReview) return res.status(404).send({
+          status: false,
+          message: 'Review not found!'
+      })
+
+      // check if Review is deleted
+      if (isReview.isDeleted) return res.status(404).send({
+          status: false,
+          message: "Review already deleted!"
+      })
+
+      // destructure body data
+      let {
+          review,
+          rating,
+          reviewedBy
+      } = dataForUpdate
+
+      // validate review's review, rating, name
+      if (!validation.isEmpty(review)) {
+          isReview.review = review
+      }
+
+      if (!(rating)) {
+          // Rating must be in 1 to 5
+          if (rating < 1 || rating > 5) return res.status(400).send({
+              status: false,
+              message: 'Rating must be in 1 to 5!'
+          })
+          // overwrite rating if ok case
+          isReview.rating = rating
+      }
+
+      if (!validation.isEmpty(reviewedBy)) {
+          isReview.reviewedBy = reviewedBy
+      }
+
+      // update review Data by using .save()
+      isReview.save()
+      res.status(200).send({
+          status: true,
+          message: isReview
+      })
+
+  } catch (e) {
+      console.log(e)
+      res.status(500).send({
+          status: false,
+          message: e.message
+      })
+  }
+}
 
 
 
