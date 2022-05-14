@@ -10,15 +10,26 @@ const authentication = (req, res, next) => {
     }
     if (!token) return res.status(400).send({ status: false, message: "Token is missing" });
 
-    let decodedToken = jwt.verify(token, "My private key");
-    if (!decodedToken) return res.status(401).send({ status: false, message: "Token is incorrect" })
+    let decodedToken 
+    jwt.verify(token, "My private key",function(error,securecode){
 
-    next();
+      if(error) return res.status(403).send({msg:error.message})
+      decodedToken=securecode;
+next();
+
+
+    });
+   // if (!decodedToken) return res.status(401).send({ status: false, message: "Token is incorrect" })
+
+    //next();
   } catch (err) {
     res.status(500).send({ status: false, error: err.message })
   }
 }
 
+
+
+//------------
 const authorization = async (req, res, next) => {
   try {
     let token = req.headers['x-Api-key'];

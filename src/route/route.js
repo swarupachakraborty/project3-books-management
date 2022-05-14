@@ -17,11 +17,11 @@ router.post("/books",authentication,bookController.createBook)
 router.get("/books",authentication,bookController.getBooks)
 router.get("/books/:bookId",authentication,bookController.getBookById)
 router.put("/books/:bookId",authentication,authorization,bookController.updateBook)
-router.delete("/books/:bookId",authentication,bookController.deleteBooks)
+router.delete("/books/:bookId",authentication,authorization,bookController.deleteBooks)
 
 //Review APIs
 
 router.post("/books/:bookId/review",addReview)
-//  router.put("books/:bookId/review/:reviewId", updateReview)
-//  router.delete('/books/:bookId/review/:reviewId', deleteReview);
+  router.put("books/:bookId/review/:reviewId", updateReview)
+ router.delete('/books/:bookId/review/:reviewId', deleteReview);
 module.exports=router;

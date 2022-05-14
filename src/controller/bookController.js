@@ -66,55 +66,41 @@ const createBook = async (req, res) => {
           return res.status(400).send({ status: false, message: 'Please Enter a Valid ISBN' });
       }
 
- 
-      
-      // Check category is coming or not
+ // Check category is coming or not
       if (!isValid(category)) {
           return res.status(400).send({ status: false, message: 'category is Required' });
       }
-
-
-   
-
-      // Check subcategory is coming or not
+ // Check subcategory is coming or not
       if (!isValid(subcategory)) {
           return res.status(400).send({ status: false, message: 'subcategory is Required' });
       }
-
-  
-
-      // Check releasedAt is coming or not
+// Check releasedAt is coming or not
       if (!isValid(releasedAt)) {
           return res.status(400).send({ status: false, message: 'Please Enter Released Date' });
       }
-
-      // Check releasedAt Value should be in given format
+// Check releasedAt Value should be in given format
       let reAt = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/;// YYYY-MM-DD
       if (!reAt.test(releasedAt)) {
           return res.status(400).send({ status: false, message: "Released Date Format Should be in 'YYYY-MM-DD' Format " });
       }
-
-      
-      // Valid reviews when reviews are coming
+// Valid reviews when reviews are coming
       if (reviews && (typeof reviews !== 'number')) {
           return res.status(400).send({ status: false, message: "Reviews Must be numbers" })
       }
-
-      // Check if isDeleted true
+// Check if isDeleted true
       if(isDeleted === true){
           return res.status(400).send({ status: false, message: "No Data Should Be Deleted At The Time Of Creation" })
       }
-
-      // After All Successful Validation then Create Book
+ // After All Successful Validation then Create Book
       const bookDetails = await bookModel.create(reqBody)
-      return res.status(500).send({ status: true, message: 'successfully created ', data: { bookDetails } })
+      return res.status(201).send({ status: true, message: 'successfully created ', data: { bookDetails } })
           
   } catch (err) {
       console.log(err)
       return res.status(500).send({ status: false, message: err.message })  
 };
  }
-  //=======================GET BOOK BY QUERY=====================================
+//--------------------------GET BOOK BY QUERY--------------------------------------------------
 
 const getBooks = async function (req, res) {
   try {
@@ -142,7 +128,7 @@ const getBooks = async function (req, res) {
   }
 };
 
-///====================GET BOOK BY ID====================================
+//---------------------GET BOOK BY ID-------------------------------------------------
 
 const getBookById = async (req, res) => {
   try {
@@ -164,7 +150,60 @@ const getBookById = async (req, res) => {
   }
 }
 
-//=======================DeleteBook ById=====================================
+//updateBook
+
+const updateBook = async function (req, res) {
+    try {
+      const bookId = req.params.bookId;
+      if (!bookId)
+        return res.status(404).send({ status: false, msg: "No Book Found" });
+      if (!isValid(bookId))
+        return res.status(404).send({ status: false, msg: "BookID invalid" });
+  
+      const bookFound = await bookModel.findById(bookId);
+      if (bookFound.isDeleted === true) {
+        return res.status(404).send({ Status: "false", msg: "bookis deleted " });
+      }
+  
+      //*Extracts Param
+      const title = req.body.title;          
+      const  excerpt= req.body.excerpt;
+      const releasedate = req.body.releasedate;
+      const ISBN = req.body.ISBN;
+     
+  
+      if (title || excerpt|| releasedate || ISBN ) {
+        const updatedBook = await bookModel.findOneAndUpdate(
+          { _id: bookId },
+          {
+            title: title,
+            excerpt:excerpt,
+            releasedate:releasedate,
+            ISBN:ISBN,
+            
+           
+            isPublished: true,
+            publishedAt: new Date(),
+          },
+          { new: true }
+        );
+  
+        //*Validation
+        if (!updatedBook) return res.status(404).send({ msg: "Book not found" });
+        res
+          .status(200)
+          .send({ status: true, msg: "Updated successfully", data: updatedBook });
+      } else {
+        res.status(400).send({ msg: "data is required in body " });
+      }
+    } catch (err) {
+      res
+        .status(500)
+        .send({ status: false, msg: "server Error", err: err.message });
+    }
+  };
+  
+//----------------------DeleteBook ById---------------------------------------
 
 const deleteBooks = async (req, res)=> {
   try {
@@ -200,7 +239,7 @@ const deleteBooks = async (req, res)=> {
   module.exports.getBookById = getBookById
   module.exports.updateBook= updateBook
   module.exports.deleteBooks = deleteBooks
-  
+
 
 
 

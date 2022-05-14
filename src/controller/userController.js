@@ -28,17 +28,11 @@ const CreateUser = async function (req, res) {
         if (!isValid(title)) {
             return res.status(400).send({status: false, msg: "Enter Title " })
         }
-        if(title){
-        if(!(title ="Mr")){
-          return res.status(400).send({msg: "Title should be Mr or Miss or Mrs"})
-        }
-        if(!(title = "Miss")){
-            return res.status(400).send({msg: "Title should be Mr or Miss or Mrs"})
-          }
-          if(!(title != "Mrs")){
-            return res.status(400).send({msg: "Title should be Mr or Miss or Mrs"})
-          }
-        }
+        // if(title){
+            if(!["Mr","Mrs","Miss"].includes(title)){
+                return res.status(400).send({status: false,  msg: "Improper title" })
+                }
+        // }
         if (!isValid(name)) {
             return res.status(400).send({status: false,  msg: "Enter Valid Name " })
         }
@@ -103,7 +97,7 @@ const userLogin = async function(req,res){
        }
        
        if (!(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email))){
-           res.status(400).send({status:false, message: `Emial should be a valid email address`})
+           res.status(400).send({status:false, message: `Emaiul should be a valid email address`})
            return
        }
 
@@ -124,8 +118,8 @@ const userLogin = async function(req,res){
            userId: user._id.toString(),
            batch: "uranium",
            organisation: 'FunctionUp',
-        //    expire: "10m"
-       },"My private key"
+            iat: new Date().getTime() /1000 
+       },"My private key" ,{expiresIn:"1m"}
            
        );
 
