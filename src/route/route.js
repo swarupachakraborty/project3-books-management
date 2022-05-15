@@ -5,7 +5,7 @@ const userController = require("../controller/userController")
 const bookController=require("../controller/bookController")
 
 const {authentication,authorization}  = require("../middleware/authe&Auth");
-const { addReview,updateReview,deleteReview } = require('../controller/reviewController');
+const reviewController = require('../controller/reviewController');
 
 //User APIs
 router.post("/register",userController.CreateUser)
@@ -18,10 +18,13 @@ router.get("/books",authentication,bookController.getBooks)
 router.get("/books/:bookId",authentication,bookController.getBookById)
 router.put("/books/:bookId",authentication,authorization,bookController.updateBook)
 router.delete("/books/:bookId",authentication,bookController.deleteBooks)
+router.delete("/books/:bookId",authentication,authorization,bookController.deleteBooks)
+
 
 //Review APIs
 
-router.post("/books/:bookId/review",addReview)
-//router.put("books/:bookId/review/:reviewId", updateReview)
-     router.delete('/books/:bookId/review/:reviewId', deleteReview);
+router.post("/books/:bookId/review",reviewController.addReview)
+  router.put("/books/:bookId/review/:reviewId",reviewController.updateReview)
+ router.delete('/books/:bookId/review/:reviewId',reviewController.deleteReview);
+
 module.exports=router;
